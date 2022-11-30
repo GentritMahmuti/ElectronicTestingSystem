@@ -14,6 +14,7 @@ namespace ElectronicTestingSystem.Controllers
         {
             _examService = examService;
         }
+        //TakeExam
         [HttpGet("TakeExam")]
         public async Task<IActionResult> TakeExam(int id)
         {
