@@ -1,6 +1,7 @@
 ﻿using ElectronicTestingSystem.Models.DTOs;
 using ElectronicTestingSystem.Services;
 using ElectronicTestingSystem.Services.IService;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ElectronicTestingSystem.Controllers
@@ -9,10 +10,11 @@ namespace ElectronicTestingSystem.Controllers
     public class ExamController : Controller
     {
         private readonly IExamService _examService;
-
-        public ExamController(IExamService examService)
+        private readonly IEmailSender _emailSender;
+        public ExamController(IExamService examService, IEmailSender emailSender)
         {
             _examService = examService;
+            _emailSender = emailSender;
         }
         //TakeExam
         [HttpGet("TakeExam")]
@@ -37,6 +39,7 @@ namespace ElectronicTestingSystem.Controllers
             }
             double percentage = ((double)points / totalPoints) * 100;
             string result = String.Format("Ju keni plotesuar testin me {0:0.00}% saktesi", percentage);
+            await _emailSender.SendEmailAsync("gentrit.mahmuti@gjirafa.com", "Rezultati", result);
             return Ok(result);
         }
 

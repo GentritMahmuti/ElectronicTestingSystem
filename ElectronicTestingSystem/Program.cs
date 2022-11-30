@@ -2,8 +2,10 @@ using AutoMapper;
 using ElectronicTestingSystem.Data;
 using ElectronicTestingSystem.Data.UnitOfWork;
 using ElectronicTestingSystem.Helper;
+using ElectronicTestingSystem.Helpers;
 using ElectronicTestingSystem.Services;
 using ElectronicTestingSystem.Services.IService;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 
@@ -24,6 +26,11 @@ builder.Services.AddTransient<IQuestionService, QuestionService>();
 builder.Services.AddTransient<IExamService, ExamService>();
 builder.Services.AddTransient<IUserService, UserService>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+
+var smtpConfigurations = builder.Configuration.GetSection(nameof(SmtpConfiguration)).Get<SmtpConfiguration>();
+builder.Services.AddSingleton(smtpConfigurations);
+builder.Services.AddTransient<IEmailSender, SmtpEmailSender>();
 
 var logger = new LoggerConfiguration()
         .ReadFrom.Configuration(builder.Configuration)
