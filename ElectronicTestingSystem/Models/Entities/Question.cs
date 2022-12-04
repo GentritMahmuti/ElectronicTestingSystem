@@ -16,20 +16,18 @@ namespace ElectronicTestingSystem.Models.Entities
 
         [Column(TypeName = "nvarchar(200)")]
         public string QuestionInWords { get; set; }
-
-        [Column(TypeName = "nvarchar(50)")]
         public string ImageUrl { get; set; }
 
-        [Column(TypeName = "nvarchar(50)")]
+        [Column(TypeName = "nvarchar(100)")]
         public string Option1 { get; set; }
 
-        [Column(TypeName = "nvarchar(50)")]
+        [Column(TypeName = "nvarchar(100)")]
         public string Option2 { get; set; }
 
-        [Column(TypeName = "nvarchar(50)")]
+        [Column(TypeName = "nvarchar(100)")]
         public string Option3 { get; set; }
 
-        [Column(TypeName = "nvarchar(50)")]
+        [Column(TypeName = "nvarchar(100)")]
         public string Option4 { get; set; }
         [JsonIgnore]
         public int Answer { get; set; }

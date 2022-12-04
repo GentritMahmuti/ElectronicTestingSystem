@@ -12,6 +12,7 @@ namespace ElectronicTestingSystem.Data
         public DbSet<Exam> Exams { get; set; }
         public DbSet<Question> Questions { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<UserExam> UserExams { get; set; }
     
     }
 }

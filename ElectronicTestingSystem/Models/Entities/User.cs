@@ -4,10 +4,22 @@ namespace ElectronicTestingSystem.Models.Entities
 {
     public class User
     {
-        [Key]
-        public int UserId { get; set; }
-        public string UserName { get; set; }
-        public string Password { get; set; }
-        public string Role { get; set; }
+        public string UserId { get; set; }
+
+        [Required]
+        [MaxLength(50)]
+        public string FirsName { get; set; }
+
+        [Required]
+        [MaxLength(50)]
+        public string LastName { get; set; }
+        [EmailAddress]
+        [Required]
+        [MaxLength()]
+        public string Email { get; set; }
+        public DateTime? DateOfBirth { get; set; }
+        public string? Gender { get; set; }
+        [Phone]
+        public string? PhoneNumber { get; set; }
     }
 }

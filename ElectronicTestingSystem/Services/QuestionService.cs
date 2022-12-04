@@ -4,8 +4,9 @@ using ElectronicTestingSystem.Models.DTOs;
 using ElectronicTestingSystem.Models.Entities;
 using ElectronicTestingSystem.Services.IService;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System.Linq.Expressions;
-
 namespace ElectronicTestingSystem.Services
 {
     public class QuestionService : IQuestionService
@@ -75,5 +76,43 @@ namespace ElectronicTestingSystem.Services
 
             _unitOfWork.Complete();
         }
+
+        public async Task CreateMultipleQuestion(List<QuestionCreateDto> multipleQuestionToCreate)
+        {
+            List<Question> multipleQuestion = new List<Question>();
+            foreach (var question in multipleQuestionToCreate)
+            {
+                multipleQuestion.Add(_mapper.Map<Question>(question));
+            }
+            _unitOfWork.Repository<Question>().CreateRange(multipleQuestion);
+
+            _unitOfWork.Complete();
+        }
+        public async Task CreateMultipleQuestionUsingFile(IFormFile file)
+        {
+            string jsonData = await ReadFormFileAsync(file);
+            List<QuestionCreateDto> halo = JsonConvert.DeserializeObject<List<QuestionCreateDto>>(jsonData);
+            List<Question> multipleQuestion = new List<Question>();
+            foreach (var question in halo)
+            {
+                multipleQuestion.Add(_mapper.Map<Question>(question));
+            }
+            _unitOfWork.Repository<Question>().CreateRange(multipleQuestion);
+
+            _unitOfWork.Complete();
+        }
+        public static async Task<string> ReadFormFileAsync(IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+            {
+                return await Task.FromResult((string)null);
+            }
+
+            using (var reader = new StreamReader(file.OpenReadStream()))
+            {
+                return await reader.ReadToEndAsync();
+            }
+        }
+
     }
 }

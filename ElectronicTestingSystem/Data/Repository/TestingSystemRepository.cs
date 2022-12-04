@@ -34,7 +34,10 @@ namespace ElectronicTestingSystem.Repository
         {
             _dbContext.Set<Tentity>().Add(entity);
         }
-
+        public void CreateRange(List<Tentity> entities)
+        {
+            _dbContext.Set<Tentity>().AddRange(entities);
+        }
         public void Delete(Tentity entity)
         {
             _dbContext.Set<Tentity>().Remove(entity);

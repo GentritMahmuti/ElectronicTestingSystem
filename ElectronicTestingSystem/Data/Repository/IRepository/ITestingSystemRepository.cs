@@ -11,7 +11,9 @@ namespace ElectronicTestingSystem.Repository.IRepository
         IQueryable<Tentity> GetById(Expression<Func<Tentity, bool>> expression);
 
         void Create(Tentity entity);
-        
+
+        void CreateRange(List<Tentity> entity);
+
         void Delete(Tentity entity);
   
         void Update(Tentity entity);

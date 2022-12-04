@@ -34,17 +34,18 @@ namespace ElectronicTestingSystem.Controllers
 
             return Ok(question);
         }
-        [HttpGet("TestSerilog")]
-        public async Task<IActionResult> TestSerilog(int id)
-        {
-           
-                int num = 4;
-                int num2 = 0;
 
-                int num3 = num / num2;
+        //[HttpGet("TestSerilog")]
+        //public async Task<IActionResult> TestSerilog(int id)
+        //{
+           
+        //        int num = 4;
+        //        int num2 = 0;
+
+        //        int num3 = num / num2;
             
-            return Ok("Tested");
-        }
+        //    return Ok("Tested");
+        //}
 
         [HttpGet("GetQuestions")]
         public async Task<IActionResult> GetQuestions()
@@ -54,12 +55,27 @@ namespace ElectronicTestingSystem.Controllers
             return Ok(questions);
         }
 
-        [HttpPost("PostQuestion")]
+        [HttpPost("CreateQuestion")]
         public async Task<IActionResult> Post(QuestionCreateDto QuestionToCreate)
         {
             await _questionService.CreateQuestion(QuestionToCreate);
 
             return Ok("Question created successfully!");
+        }
+
+        [HttpPost("CreateMultipleQuestions")]
+        public async Task<IActionResult> PostMultipleQuestion(List<QuestionCreateDto> MultipleQuestionsToCreate)
+        {
+            await _questionService.CreateMultipleQuestion(MultipleQuestionsToCreate);
+
+            return Ok("Questions created successfully!");
+        }
+        [HttpPost("CreateMultipleQuestionsFromFile")]
+        public async Task<IActionResult> PostMultipleQuestionFromFile(IFormFile file)
+        {
+            await _questionService.CreateMultipleQuestionUsingFile(file);
+
+            return Ok("Questions created successfully!");
         }
 
         [HttpPut("UpdateQuestion")]
