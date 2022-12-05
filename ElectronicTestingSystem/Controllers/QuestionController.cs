@@ -4,6 +4,7 @@ using ElectronicTestingSystem.Models.DTOs;
 using ElectronicTestingSystem.Services.IService;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ElectronicTestingSystem.Controllers
 {
@@ -21,7 +22,7 @@ namespace ElectronicTestingSystem.Controllers
             _logger = logger;
         }
 
-
+        [Authorize(Roles = "LifeAdmin")]
         [HttpGet("GetQuestion")]
         public async Task<IActionResult> Get(int id)
         {
@@ -34,19 +35,18 @@ namespace ElectronicTestingSystem.Controllers
 
             return Ok(question);
         }
-
         //[HttpGet("TestSerilog")]
         //public async Task<IActionResult> TestSerilog(int id)
         //{
-           
+
         //        int num = 4;
         //        int num2 = 0;
 
         //        int num3 = num / num2;
-            
+
         //    return Ok("Tested");
         //}
-
+        [Authorize(Roles = "LifeAdmin")]
         [HttpGet("GetQuestions")]
         public async Task<IActionResult> GetQuestions()
         {
@@ -54,7 +54,7 @@ namespace ElectronicTestingSystem.Controllers
 
             return Ok(questions);
         }
-
+        [Authorize(Roles = "LifeAdmin")]
         [HttpPost("CreateQuestion")]
         public async Task<IActionResult> Post(QuestionCreateDto QuestionToCreate)
         {
@@ -62,7 +62,7 @@ namespace ElectronicTestingSystem.Controllers
 
             return Ok("Question created successfully!");
         }
-
+        [Authorize(Roles = "LifeAdmin")]
         [HttpPost("CreateMultipleQuestions")]
         public async Task<IActionResult> PostMultipleQuestion(List<QuestionCreateDto> MultipleQuestionsToCreate)
         {
@@ -70,6 +70,7 @@ namespace ElectronicTestingSystem.Controllers
 
             return Ok("Questions created successfully!");
         }
+        [Authorize(Roles = "LifeAdmin")]
         [HttpPost("CreateMultipleQuestionsFromFile")]
         public async Task<IActionResult> PostMultipleQuestionFromFile(IFormFile file)
         {
@@ -77,7 +78,7 @@ namespace ElectronicTestingSystem.Controllers
 
             return Ok("Questions created successfully!");
         }
-
+        [Authorize(Roles = "LifeAdmin")]
         [HttpPut("UpdateQuestion")]
         public async Task<IActionResult> Update(QuestionDto QuestionToUpdate)
         {
@@ -85,7 +86,7 @@ namespace ElectronicTestingSystem.Controllers
 
             return Ok("Question updated successfully!");
         }
-
+        [Authorize(Roles = "LifeAdmin")]
         [HttpDelete("DeleteQuestion")]
         public async Task<IActionResult> Delete(int id)
         {
@@ -93,6 +94,7 @@ namespace ElectronicTestingSystem.Controllers
 
             return Ok("Question deleted successfully!");
         }
+        [Authorize(Roles = "LifeAdmin")]
         [HttpPost("UploadImage")]
         public async Task<IActionResult> UploadImage(IFormFile file)
         {

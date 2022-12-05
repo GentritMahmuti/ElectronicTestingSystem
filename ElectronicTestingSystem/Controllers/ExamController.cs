@@ -18,14 +18,14 @@ namespace ElectronicTestingSystem.Controllers
             _emailSender = emailSender;
         }
         //TakeExam
-        [Authorize]
+        [Authorize( Roles = "LifeUser")]
         [HttpGet("TakeExam")]
         public async Task<IActionResult> TakeExam(int id)
         {
             var questions = await _examService.TakeExam(id);
             return Ok(questions);
         }
-        [Authorize(Roles="LifeUser")]
+        [Authorize(Roles = "LifeUser")]
         [HttpPost("SubmitExam")]
         public async Task<IActionResult> PostExam(int id,List<int> answers)
         {
@@ -42,10 +42,10 @@ namespace ElectronicTestingSystem.Controllers
             }
             double percentage = ((double)points / totalPoints) * 100;
             string result = String.Format("Ju keni plotesuar testin me {0:0.00}% saktesi", percentage);
-            // await _emailSender.SendEmailAsync("gentrit.mahmuti@gjirafa.com", "Rezultati", result);
+            await _emailSender.SendEmailAsync("gentrit.mahmuti@gjirafa.com", "Rezultati", result);
             return Ok(result);
         }
-        [Authorize(Roles="LifeAdmin")]
+        [Authorize(Roles = "LifeAdmin")]
         [HttpPost("PostExam")]
         public async Task<IActionResult> Post(ExamCreateDto examToCreate)
         {
@@ -53,6 +53,7 @@ namespace ElectronicTestingSystem.Controllers
 
             return Ok("Exam created successfully!");
         }
+        [Authorize(Roles = "LifeAdmin")]
         [HttpDelete("DeleteExam")]
         public async Task<IActionResult> Delete(int id)
         {

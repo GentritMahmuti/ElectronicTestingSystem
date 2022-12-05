@@ -29,8 +29,12 @@ builder.Services.AddSingleton(mapper);
 builder.Services.AddDbContext<ElectronicTestingSystemDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddTransient<IQuestionService, QuestionService>();
-builder.Services.AddTransient<IExamService, ExamService>();
+builder.Services.AddServices();
+
+var smtpConfiguration = builder.Configuration.GetSection(nameof(SmtpConfiguration)).Get<SmtpConfiguration>();
+
+builder.Services.AddEmailSenders(builder.Configuration);
+
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 
@@ -162,6 +166,8 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
+app.UseMiddleware<ExceptionHandlingMiddleware>();
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -180,6 +186,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
