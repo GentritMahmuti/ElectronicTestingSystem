@@ -83,9 +83,17 @@ namespace ElectronicTestingSystem.Controllers
         [HttpPut("UpdateQuestion")]
         public async Task<IActionResult> Update(QuestionDto QuestionToUpdate)
         {
-            await _questionService.UpdateQuestion(QuestionToUpdate);
-            _logger.LogInformation("Updating question");
-            return Ok("Question updated successfully!");
+            try
+            {
+                await _questionService.UpdateQuestion(QuestionToUpdate);
+                _logger.LogInformation("Updating question");
+                return Ok("Question updated successfully!");
+            }
+            catch(Exception e)
+            {
+                _logger.LogError(e, "Error  updating question");
+                return BadRequest(e.ToString());
+            }
         }
 
         //Admin can delete questions.

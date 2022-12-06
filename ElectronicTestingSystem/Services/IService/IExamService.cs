@@ -9,7 +9,7 @@ namespace ElectronicTestingSystem.Services.IService
         Task CreateExam(ExamCreateDto examToCreate);
         Task DeleteExam(int examId);
         Task RequestExam(string userId, int examId);
-        Task AproveExam(string userId, int examId);
+        Task ApproveExam(string userId, int examId);
 
         Task<List<Question>> TakeApprovedExam(string userId, int examId);
         Task<String> SubmitExamAnswers(int examId, List<int> correctAnswers);

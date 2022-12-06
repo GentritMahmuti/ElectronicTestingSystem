@@ -48,19 +48,35 @@ namespace ElectronicTestingSystem.Controllers
         [HttpPut("UpdateUser")]
         public async Task<IActionResult> UpdateUser(UserDto userToUpdate)
         {
-            await _userService.UpdateUser(userToUpdate);
-            _logger.LogInformation("Updating a user");
-            return Ok("User updated successfully!");
+            try
+            {
+                await _userService.UpdateUser(userToUpdate);
+                _logger.LogInformation("Updating a user");
+                return Ok("User updated successfully!");
+            }
+            catch(Exception e)
+            {
+                _logger.LogError(e, "Error  updating user data");
+                return BadRequest(e.ToString());
+            }
         }
 
-        //Admins can delete users.
+        //Admins can delete users. When a user is deleted, the ExamRequest Table's UserID becomes null. 
         [Authorize(Roles = "LifeAdmin")]
         [HttpPost("DeleteUser")]
         public async Task<IActionResult> Delete(string id)
         {
-            await _userService.DeleteUser(id);
-            _logger.LogInformation("Deleting a user");
-            return Ok("User deleted successfully!");
+            try
+            {
+                await _userService.DeleteUser(id);
+                _logger.LogInformation("Deleting a user");
+                return Ok("User deleted successfully!");
+            }
+            catch(Exception e)
+            {
+                _logger.LogError(e, "Error deleting user");
+                return BadRequest(e.ToString());
+            }
         }
     }
 }

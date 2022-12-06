@@ -26,12 +26,20 @@ namespace ElectronicTestingSystem.Controllers
         [HttpGet("RequestExam")]
         public async Task<IActionResult> RequestExam(int examId)
         {
-            var userData = (ClaimsIdentity)User.Identity;
-            var userId = userData.FindFirst(ClaimTypes.NameIdentifier).Value;
-            _logger.LogInformation("Requesting an exam");
-            await _examService.RequestExam(userId,examId);
-            return Ok("Exam requested");
+            try
+            {
+                var userData = (ClaimsIdentity)User.Identity;
+                var userId = userData.FindFirst(ClaimTypes.NameIdentifier).Value;
+                _logger.LogInformation("Requesting an exam");
+                await _examService.RequestExam(userId, examId);
+                return Ok("Exam requested");
 
+            }
+            catch(Exception e)
+            {
+                _logger.LogError(e,"Error requesting an Exam by the user");
+                return BadRequest(e);
+            }
         }
 
         //An exam can be approved by admin so that a user can take it. 
@@ -39,10 +47,10 @@ namespace ElectronicTestingSystem.Controllers
         [HttpGet("ApproveExam")]
         public async Task<IActionResult> ApproveExam(string userId, int examId)
         {
-            _examService.AproveExam(userId, examId);
-            _logger.LogInformation("Approving an Exam");
-            return Ok("Exam approved");
-
+            
+                _examService.ApproveExam(userId, examId);
+                _logger.LogInformation("Approving an Exam");
+                return Ok("Exam approved");
         }
 
         //An exam can be taken after the user's request has been approved by the admin.
@@ -77,14 +85,22 @@ namespace ElectronicTestingSystem.Controllers
             return Ok("Exam created successfully!");
         }
 
-        //Admin can delete an exam.
+        //Admins can delete an exam. When an exam is deleted, records associated with that ExamId in ExamQuestion will be deleted.
         [Authorize(Roles = "LifeAdmin")]
         [HttpDelete("DeleteExam")]
         public async Task<IActionResult> Delete(int id)
         {
-            await _examService.DeleteExam(id);
-            _logger.LogInformation("Deleting an exam");
-            return Ok("Exam deleted successfully!");
+            try
+            {
+                await _examService.DeleteExam(id);
+                _logger.LogInformation("Deleting an exam");
+                return Ok("Exam deleted successfully!");
+            }
+            catch(Exception e)
+            {
+                _logger.LogError(e, "Error  deleting an exam");
+                return BadRequest(e);
+            }
         }
     }
 }

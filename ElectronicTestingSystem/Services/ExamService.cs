@@ -5,6 +5,7 @@ using ElectronicTestingSystem.Models.Entities;
 using ElectronicTestingSystem.Services.IService;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Identity.Client;
 using Microsoft.IdentityModel.Tokens;
 using System.Linq.Expressions;
 using System.Security.Claims;
@@ -80,10 +81,14 @@ namespace ElectronicTestingSystem.Services
             return query.ToList();
         }
 
-        public async Task AproveExam(string userId, int examId)
+        public async Task ApproveExam(string userId, int examId)
         {
 
             var examRequest = await GetExamRequest(userId, examId);
+            if(examRequest.IsApproved == true)
+            {
+                throw new Exception("This exam request was approved before.");
+            }
             if (examRequest == null)
             {
                 throw new Exception("This exam request doesn't exists.");
