@@ -12,7 +12,12 @@ namespace ElectronicTestingSystem.Data
         public DbSet<Exam> Exams { get; set; }
         public DbSet<Question> Questions { get; set; }
         public DbSet<User> Users { get; set; }
-        public DbSet<UserExam> UserExams { get; set; }
-    
+        public DbSet<ExamRequest> ExamRequests { get; set; }
+
+        //protected override void OnModelCreating(ModelBuilder modelBuilder)
+        //{
+        //    modelBuilder.Entity<ExamRequest>().HasMany(e => e.).WithOptional(s => s.Parent).WillCascadeOnDelete(true);
+        //}
+
     }
 }

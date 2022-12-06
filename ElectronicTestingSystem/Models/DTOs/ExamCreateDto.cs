@@ -6,6 +6,8 @@ namespace ElectronicTestingSystem.Models.DTOs
     {
         [Required]
         public int NrOfQuestions { get; set; }
+        public string ExamName { get; set; }
+        public string ExamAuthor { get; set; }
 
     }
 }

@@ -6,11 +6,13 @@ namespace ElectronicTestingSystem.Services.IService
     public interface IQuestionService
     {
         Task CreateQuestion(QuestionCreateDto questionToCreate);
-        Task CreateMultipleQuestion(List<QuestionCreateDto> multipleQuestionToCreate);
-        Task CreateMultipleQuestionUsingFile(IFormFile file);
+        Task CreateMultipleQuestions(List<QuestionCreateDto> multipleQuestionToCreate);
+        Task CreateMultipleQuestionsUsingFile(IFormFile file);
         Task DeleteQuestion(int id);
         Task<List<Question>> GetAllQuestions();
         Task<Question> GetQuestion(int id);
         Task UpdateQuestion(QuestionDto questionToUpdate);
+        Task<string> UploadImage(IFormFile? file, int questionId);
+        Task<string> UploadImageFromUrl(string url, int questionId);
     }
 }

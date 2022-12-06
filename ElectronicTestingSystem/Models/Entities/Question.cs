@@ -12,6 +12,7 @@ namespace ElectronicTestingSystem.Models.Entities
         }
         [Key]
         public int QuestionId { get; set; }
+        [Range(1,20)]
         public int QuestionPoints { get; set; }
 
         [Column(TypeName = "nvarchar(200)")]
@@ -30,8 +31,9 @@ namespace ElectronicTestingSystem.Models.Entities
         [Column(TypeName = "nvarchar(100)")]
         public string Option4 { get; set; }
         [JsonIgnore]
-        public int Answer { get; set; }
-
+        [Range(1, 4)]
+        public int CorrectAnswer { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Exam> Exams { get; set; }
 
     }

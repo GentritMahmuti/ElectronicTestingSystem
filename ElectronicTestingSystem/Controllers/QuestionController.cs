@@ -5,6 +5,10 @@ using ElectronicTestingSystem.Services.IService;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Authorization;
+using System.Data;
+using ElectronicTestingSystem.Models.Entities;
+using System.Runtime.Intrinsics.X86;
+using ElectronicTestingSystem.Migrations;
 
 namespace ElectronicTestingSystem.Controllers
 {
@@ -12,22 +16,21 @@ namespace ElectronicTestingSystem.Controllers
     public class QuestionController : Controller
     {
         private readonly IQuestionService _questionService;
-        private readonly IConfiguration _configuration;
         private readonly ILogger<QuestionController> _logger;
 
-        public QuestionController(IQuestionService questionService, IConfiguration configuration, ILogger<QuestionController> logger)
+        public QuestionController(IQuestionService questionService, ILogger<QuestionController> logger)
         {
             _questionService = questionService;
-            _configuration = configuration;
             _logger = logger;
         }
 
+        //Admins can see questions based on their ID.
         [Authorize(Roles = "LifeAdmin")]
         [HttpGet("GetQuestion")]
         public async Task<IActionResult> Get(int id)
         {
             var question = await _questionService.GetQuestion(id);
-
+            _logger.LogInformation("Getting a question");
             if (question == null)
             {
                 return NotFound();
@@ -35,102 +38,99 @@ namespace ElectronicTestingSystem.Controllers
 
             return Ok(question);
         }
-        //[HttpGet("TestSerilog")]
-        //public async Task<IActionResult> TestSerilog(int id)
-        //{
 
-        //        int num = 4;
-        //        int num2 = 0;
-
-        //        int num3 = num / num2;
-
-        //    return Ok("Tested");
-        //}
+        //Admin can see all the questions.
         [Authorize(Roles = "LifeAdmin")]
-        [HttpGet("GetQuestions")]
+        [HttpGet("GetAllQuestions")]
         public async Task<IActionResult> GetQuestions()
         {
             var questions = await _questionService.GetAllQuestions();
-
+            _logger.LogInformation("Getting all questions");
             return Ok(questions);
         }
+
+        //Admin can create questions.
         [Authorize(Roles = "LifeAdmin")]
         [HttpPost("CreateQuestion")]
-        public async Task<IActionResult> Post(QuestionCreateDto QuestionToCreate)
+        public async Task<IActionResult> CreateQuestion(QuestionCreateDto QuestionToCreate)
         {
             await _questionService.CreateQuestion(QuestionToCreate);
-
+            _logger.LogInformation("Creating a question");
             return Ok("Question created successfully!");
         }
+        //Admins can create multiple questions at the same time.
         [Authorize(Roles = "LifeAdmin")]
         [HttpPost("CreateMultipleQuestions")]
         public async Task<IActionResult> PostMultipleQuestion(List<QuestionCreateDto> MultipleQuestionsToCreate)
         {
-            await _questionService.CreateMultipleQuestion(MultipleQuestionsToCreate);
-
+            await _questionService.CreateMultipleQuestions(MultipleQuestionsToCreate);
+            _logger.LogInformation("Creating multiple questions");
             return Ok("Questions created successfully!");
         }
+
+        //Admins can create multiple questions at the same time using json file
         [Authorize(Roles = "LifeAdmin")]
         [HttpPost("CreateMultipleQuestionsFromFile")]
         public async Task<IActionResult> PostMultipleQuestionFromFile(IFormFile file)
         {
-            await _questionService.CreateMultipleQuestionUsingFile(file);
-
+            await _questionService.CreateMultipleQuestionsUsingFile(file);
+            _logger.LogInformation("Creating multiple questions using file");
             return Ok("Questions created successfully!");
         }
+
+        //Admin can update questions.
         [Authorize(Roles = "LifeAdmin")]
         [HttpPut("UpdateQuestion")]
         public async Task<IActionResult> Update(QuestionDto QuestionToUpdate)
         {
             await _questionService.UpdateQuestion(QuestionToUpdate);
-
+            _logger.LogInformation("Updating question");
             return Ok("Question updated successfully!");
         }
+
+        //Admin can delete questions.
         [Authorize(Roles = "LifeAdmin")]
         [HttpDelete("DeleteQuestion")]
         public async Task<IActionResult> Delete(int id)
         {
             await _questionService.DeleteQuestion(id);
-
+            _logger.LogInformation("Deleting question");
             return Ok("Question deleted successfully!");
         }
+
+        //Admin can upload Image using url 
+        [HttpPost("UploadImageUsingUrl")]
         [Authorize(Roles = "LifeAdmin")]
-        [HttpPost("UploadImage")]
-        public async Task<IActionResult> UploadImage(IFormFile file)
+        public async Task<IActionResult> UploadImageUsingUrl(int questionId, string url)
         {
-            var uploadPicture = await UploadToBlob(file);
-
-            var imageUrl = $"{_configuration.GetValue<string>("BlobConfig:CDNLife")}{file.FileName}";
-
-            return Ok(imageUrl);
-        }
-
-        [NonAction]
-        public async Task<PutObjectResponse> UploadToBlob(IFormFile file)
-        {
-
-            string serviceURL = _configuration.GetValue<string>("BlobConfig:serviceURL");
-            string AWS_accessKey = _configuration.GetValue<string>("BlobConfig:accessKey");
-            string AWS_secretKey = _configuration.GetValue<string>("BlobConfig:secretKey");
-            var bucketName = _configuration.GetValue<string>("BlobConfig:bucketName");
-            var keyName = _configuration.GetValue<string>("BlobConfig:defaultFolder");
-
-            var config = new AmazonS3Config() { ServiceURL = serviceURL };
-            var s3Client = new AmazonS3Client(AWS_accessKey, AWS_secretKey, config);
-            keyName = String.Concat(keyName, file.FileName);
-
-            var fs = file.OpenReadStream();
-            var request = new PutObjectRequest
+            try
             {
-                BucketName = bucketName,
-                Key = keyName,
-                InputStream = fs,
-                ContentType = file.ContentType,
-                CannedACL = S3CannedACL.PublicRead
-            };
-
-            return await s3Client.PutObjectAsync(request);
+                var imageUrl = await _questionService.UploadImageFromUrl(url, questionId);
+                return Ok($"The image was downloaded and uploaded at : {imageUrl}");
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Error in downloading and uploading image.");
+                return BadRequest(e.ToString());
+            }
         }
 
+        //Admin can upload a local Image 
+        [HttpPost("UploadImage")]
+        [Authorize(Roles = "LifeAdmin")]
+        public async Task<IActionResult> UploadImage(IFormFile file, int questionId)
+        {
+            try
+            {
+                var url = await _questionService.UploadImage(file, questionId);
+                return Ok($"\"The image was uploaded at the url: {url}");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error in uploading the image.");
+                return BadRequest(ex.ToString());
+            }
+
+        }
     }
 }

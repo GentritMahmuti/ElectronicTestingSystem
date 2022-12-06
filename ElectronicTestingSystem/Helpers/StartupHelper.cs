@@ -38,6 +38,7 @@ namespace ElectronicTestingSystem.Helpers
         {
             services.AddTransient<IQuestionService, QuestionService>();
             services.AddTransient<IExamService, ExamService>();
+            services.AddTransient<IUserService, UserService>();
         }
     }
 }

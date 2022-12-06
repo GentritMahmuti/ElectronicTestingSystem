@@ -17,6 +17,8 @@ namespace ElectronicTestingSystem.Migrations
                 {
                     ExamId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    ExamName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ExamAuthor = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     NrOfQuestions = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -37,7 +39,7 @@ namespace ElectronicTestingSystem.Migrations
                     Option2 = table.Column<string>(type: "nvarchar(100)", nullable: false),
                     Option3 = table.Column<string>(type: "nvarchar(100)", nullable: false),
                     Option4 = table.Column<string>(type: "nvarchar(100)", nullable: false),
-                    Answer = table.Column<int>(type: "int", nullable: false)
+                    CorrectAnswer = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -86,31 +88,30 @@ namespace ElectronicTestingSystem.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "UserExams",
+                name: "ExamRequests",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     IsApproved = table.Column<bool>(type: "bit", nullable: false),
                     StartTime = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     ExamId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserExams", x => x.Id);
+                    table.PrimaryKey("PK_ExamRequests", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_UserExams_Exams_ExamId",
+                        name: "FK_ExamRequests_Exams_ExamId",
                         column: x => x.ExamId,
                         principalTable: "Exams",
                         principalColumn: "ExamId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_UserExams_Users_UserId",
+                        name: "FK_ExamRequests_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
-                        principalColumn: "UserId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "UserId");
                 });
 
             migrationBuilder.CreateIndex(
@@ -119,13 +120,13 @@ namespace ElectronicTestingSystem.Migrations
                 column: "QuestionsQuestionId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserExams_ExamId",
-                table: "UserExams",
+                name: "IX_ExamRequests_ExamId",
+                table: "ExamRequests",
                 column: "ExamId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserExams_UserId",
-                table: "UserExams",
+                name: "IX_ExamRequests_UserId",
+                table: "ExamRequests",
                 column: "UserId");
         }
 
@@ -136,7 +137,7 @@ namespace ElectronicTestingSystem.Migrations
                 name: "ExamQuestion");
 
             migrationBuilder.DropTable(
-                name: "UserExams");
+                name: "ExamRequests");
 
             migrationBuilder.DropTable(
                 name: "Questions");

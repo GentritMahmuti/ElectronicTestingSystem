@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ElectronicTestingSystem.Migrations
 {
     [DbContext(typeof(ElectronicTestingSystemDbContext))]
-    [Migration("20221204130021_CreateDb")]
+    [Migration("20221206113339_CreateDb")]
     partial class CreateDb
     {
         /// <inheritdoc />
@@ -33,12 +33,49 @@ namespace ElectronicTestingSystem.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ExamId"));
 
+                    b.Property<string>("ExamAuthor")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ExamName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("NrOfQuestions")
                         .HasColumnType("int");
 
                     b.HasKey("ExamId");
 
                     b.ToTable("Exams");
+                });
+
+            modelBuilder.Entity("ElectronicTestingSystem.Models.Entities.ExamRequest", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ExamId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsApproved")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("StartTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ExamId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("ExamRequests");
                 });
 
             modelBuilder.Entity("ElectronicTestingSystem.Models.Entities.Question", b =>
@@ -49,7 +86,7 @@ namespace ElectronicTestingSystem.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("QuestionId"));
 
-                    b.Property<int>("Answer")
+                    b.Property<int>("CorrectAnswer")
                         .HasColumnType("int");
 
                     b.Property<string>("ImageUrl")
@@ -117,36 +154,6 @@ namespace ElectronicTestingSystem.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("ElectronicTestingSystem.Models.Entities.UserExam", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("ExamId")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsApproved")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime?>("StartTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ExamId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("UserExams");
-                });
-
             modelBuilder.Entity("ExamQuestion", b =>
                 {
                     b.Property<int>("ExamsExamId")
@@ -162,7 +169,7 @@ namespace ElectronicTestingSystem.Migrations
                     b.ToTable("ExamQuestion");
                 });
 
-            modelBuilder.Entity("ElectronicTestingSystem.Models.Entities.UserExam", b =>
+            modelBuilder.Entity("ElectronicTestingSystem.Models.Entities.ExamRequest", b =>
                 {
                     b.HasOne("ElectronicTestingSystem.Models.Entities.Exam", "Exam")
                         .WithMany()
@@ -172,9 +179,7 @@ namespace ElectronicTestingSystem.Migrations
 
                     b.HasOne("ElectronicTestingSystem.Models.Entities.User", "User")
                         .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserId");
 
                     b.Navigation("Exam");
 

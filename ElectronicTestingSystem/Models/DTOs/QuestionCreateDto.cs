@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
@@ -25,6 +26,7 @@ namespace ElectronicTestingSystem.Models.DTOs
 
         [Column(TypeName = "nvarchar(50)")]
         public string Option4 { get; set; }
-        public int Answer { get; set; }
+        [Range(1, 4)]
+        public int CorrectAnswer { get; set; }
     }
 }
